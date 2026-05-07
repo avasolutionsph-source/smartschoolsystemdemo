@@ -1,19 +1,20 @@
-import { PageHeader } from '@/components/PageHeader'
-import { EmptyState } from '@/components/EmptyState'
-import { GraduationCap } from 'lucide-react'
+import { Route, Routes } from 'react-router-dom'
+import StudentDashboard from './Dashboard'
+import StudentSchedule from './Schedule'
+import StudentGrades from './Grades'
+import StudentSOA from './SOA'
+import StudentDocuments from './Documents'
+import StudentProfile from './Profile'
 
 export default function StudentHome() {
   return (
-    <>
-      <PageHeader
-        title="Student Portal"
-        subtitle="Schedule, grades, SOA, document requests, clearance."
-      />
-      <EmptyState
-        icon={GraduationCap}
-        title="Student module — Phase 2"
-        description="Personal dashboard, schedule, grades, SOA, document tracker, and clearance status."
-      />
-    </>
+    <Routes>
+      <Route index element={<StudentDashboard />} />
+      <Route path="schedule" element={<StudentSchedule />} />
+      <Route path="grades" element={<StudentGrades />} />
+      <Route path="soa" element={<StudentSOA />} />
+      <Route path="documents" element={<StudentDocuments />} />
+      <Route path="profile" element={<StudentProfile />} />
+    </Routes>
   )
 }

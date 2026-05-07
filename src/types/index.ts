@@ -30,7 +30,12 @@ export interface Student {
   section: string
   status: StudentStatus
   email: string
+  contact?: string
+  address?: string
+  guardianName?: string
+  guardianContact?: string
   enrolledAt: string
+  assessment: number
 }
 
 export interface Employee {
@@ -85,4 +90,28 @@ export interface Ticket {
   assignedTo?: string
   createdBy: string
   createdAt: string
+}
+
+export type DocumentType = 'TOR' | 'COE' | 'Form 137' | 'Good Moral'
+export type DocumentStatus = 'pending' | 'processing' | 'ready' | 'released'
+
+export interface DocumentRequest {
+  id: string
+  studentId: string
+  documentType: DocumentType
+  purpose: string
+  status: DocumentStatus
+  createdAt: string
+  updatedAt: string
+}
+
+export type ClearanceArea = 'academic' | 'financial' | 'library' | 'laboratory'
+
+export interface ScheduleEntry {
+  day: 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat'
+  startTime: string
+  endTime: string
+  subject: string
+  room: string
+  teacher: string
 }

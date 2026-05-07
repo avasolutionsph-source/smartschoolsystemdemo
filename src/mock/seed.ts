@@ -1,6 +1,8 @@
 import { db, resetDb } from './db'
 import type {
   Announcement,
+  DocumentRequest,
+  DocumentType,
   Employee,
   Grade,
   Payment,
@@ -9,7 +11,7 @@ import type {
   User,
 } from '@/types'
 
-const SEED_KEY = 'abc-sss-seeded'
+const SEED_KEY = 'abc-sss-seeded-v2'
 
 const FIRST_NAMES = [
   'Ava', 'Liam', 'Sophia', 'Noah', 'Maya', 'Ethan', 'Isla', 'Mateo',
@@ -28,6 +30,13 @@ const SUBJECTS = [
   'Mathematics 1', 'English 1', 'Filipino 1', 'PE 1',
   'Programming 1', 'Data Structures', 'Networking', 'Database Systems',
 ]
+const PROGRAM_TUITION: Record<string, number> = {
+  BSIT: 28000,
+  BSCS: 30000,
+  BSBA: 26000,
+  BSED: 24000,
+  BSN: 32000,
+}
 
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
@@ -60,17 +69,25 @@ function makeStudents(): Student[] {
   return Array.from({ length: 60 }, (_, i) => {
     const program = pick(PROGRAMS)
     const yearLevel = (i % 4) + 1
+    const firstName = i === 0 ? 'Ava' : pick(FIRST_NAMES)
+    const lastName = i === 0 ? 'Reyes' : pick(LAST_NAMES)
     return {
       id: id('std', i + 1),
       studentNumber: `2025-${(1000 + i).toString()}`,
-      firstName: pick(FIRST_NAMES),
-      lastName: pick(LAST_NAMES),
+      firstName,
+      lastName,
+      middleName: pick(LAST_NAMES),
       program,
       yearLevel,
       section: `${program}-${yearLevel}${pick(SECTIONS)}`,
       status: i < 55 ? 'enrolled' : i < 57 ? 'on-leave' : 'graduated',
-      email: `student${i + 1}@abc.edu`,
+      email: i === 0 ? 'student@abc.edu' : `student${i + 1}@abc.edu`,
+      contact: `+63 9${Math.floor(100000000 + Math.random() * 899999999)}`,
+      address: pick(['Naga City', 'Manila', 'Quezon City', 'Cebu', 'Davao']) + ', Philippines',
+      guardianName: `${pick(FIRST_NAMES)} ${lastName}`,
+      guardianContact: `+63 9${Math.floor(100000000 + Math.random() * 899999999)}`,
       enrolledAt: isoDaysAgo(180 - i),
+      assessment: PROGRAM_TUITION[program] ?? 25000,
     }
   })
 }
@@ -184,6 +201,32 @@ function makeTickets(): Ticket[] {
   }))
 }
 
+function makeDocumentRequests(students: Student[]): DocumentRequest[] {
+  const types: DocumentType[] = ['TOR', 'COE', 'Form 137', 'Good Moral']
+  const purposes = [
+    'For employment',
+    'For board exam application',
+    'For transfer',
+    'For scholarship',
+    'For internship',
+    'Personal copy',
+  ]
+  const out: DocumentRequest[] = []
+  const sample = students.slice(0, 10)
+  sample.forEach((s, i) => {
+    out.push({
+      id: id('doc', i + 1),
+      studentId: s.id,
+      documentType: pick(types),
+      purpose: pick(purposes),
+      status: pick(['pending', 'pending', 'processing', 'ready', 'released']),
+      createdAt: isoDaysAgo(7 - (i % 7)),
+      updatedAt: isoDaysAgo(7 - (i % 7) - 1),
+    })
+  })
+  return out
+}
+
 export async function ensureSeed() {
   if (localStorage.getItem(SEED_KEY) === '1') return
   const users = makeUsers()
@@ -193,10 +236,14 @@ export async function ensureSeed() {
   const payments = makePayments(students)
   const grades = makeGrades(students)
   const tickets = makeTickets()
+  const documentRequests = makeDocumentRequests(students)
 
   await db.transaction(
     'rw',
-    [db.users, db.students, db.employees, db.announcements, db.payments, db.grades, db.tickets],
+    [
+      db.users, db.students, db.employees, db.announcements,
+      db.payments, db.grades, db.tickets, db.documentRequests,
+    ],
     async () => {
       await db.users.bulkPut(users)
       await db.students.bulkPut(students)
@@ -205,6 +252,7 @@ export async function ensureSeed() {
       await db.payments.bulkPut(payments)
       await db.grades.bulkPut(grades)
       await db.tickets.bulkPut(tickets)
+      await db.documentRequests.bulkPut(documentRequests)
     },
   )
   localStorage.setItem(SEED_KEY, '1')
@@ -212,5 +260,6 @@ export async function ensureSeed() {
 
 export async function reseed() {
   await resetDb()
+  localStorage.removeItem(SEED_KEY)
   await ensureSeed()
 }

@@ -14,6 +14,7 @@ import {
   Megaphone,
   ScrollText,
   ShieldCheck,
+  UserCircle,
   UserPlus,
   Users,
   Users2,
@@ -53,6 +54,7 @@ const NAV: Record<Role, NavItem[]> = {
   ],
   student: [
     { to: '/student', label: 'Dashboard', icon: Home },
+    { to: '/student/profile', label: 'My Profile', icon: UserCircle },
     { to: '/student/schedule', label: 'Schedule', icon: CalendarDays },
     { to: '/student/grades', label: 'Grades', icon: GraduationCap },
     { to: '/student/soa', label: 'My SOA', icon: ScrollText },
