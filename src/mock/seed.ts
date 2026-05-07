@@ -11,7 +11,7 @@ import type {
   User,
 } from '@/types'
 
-const SEED_KEY = 'abc-sss-seeded-v2'
+const SEED_KEY = 'abc-sss-seeded-v3'
 
 const FIRST_NAMES = [
   'Ava', 'Liam', 'Sophia', 'Noah', 'Maya', 'Ethan', 'Isla', 'Mateo',
@@ -65,10 +65,29 @@ function makeUsers(): User[] {
   }))
 }
 
+// Anchor sections used by the demo Teacher Portal — ensure each gets a roster.
+const ANCHOR_SECTIONS = [
+  { program: 'BSIT', yearLevel: 1, section: 'BSIT-1A' },
+  { program: 'BSIT', yearLevel: 2, section: 'BSIT-2A' },
+  { program: 'BSIT', yearLevel: 3, section: 'BSIT-3A' },
+  { program: 'BSCS', yearLevel: 2, section: 'BSCS-2A' },
+]
+
 function makeStudents(): Student[] {
   return Array.from({ length: 60 }, (_, i) => {
-    const program = pick(PROGRAMS)
-    const yearLevel = (i % 4) + 1
+    let program: string
+    let yearLevel: number
+    let section: string
+    if (i < ANCHOR_SECTIONS.length * 6) {
+      const anchor = ANCHOR_SECTIONS[Math.floor(i / 6)]
+      program = anchor.program
+      yearLevel = anchor.yearLevel
+      section = anchor.section
+    } else {
+      program = pick(PROGRAMS)
+      yearLevel = (i % 4) + 1
+      section = `${program}-${yearLevel}${pick(SECTIONS)}`
+    }
     const firstName = i === 0 ? 'Ava' : pick(FIRST_NAMES)
     const lastName = i === 0 ? 'Reyes' : pick(LAST_NAMES)
     return {
@@ -79,7 +98,7 @@ function makeStudents(): Student[] {
       middleName: pick(LAST_NAMES),
       program,
       yearLevel,
-      section: `${program}-${yearLevel}${pick(SECTIONS)}`,
+      section,
       status: i < 55 ? 'enrolled' : i < 57 ? 'on-leave' : 'graduated',
       email: i === 0 ? 'student@abc.edu' : `student${i + 1}@abc.edu`,
       contact: `+63 9${Math.floor(100000000 + Math.random() * 899999999)}`,

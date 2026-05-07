@@ -1,19 +1,16 @@
-import { PageHeader } from '@/components/PageHeader'
-import { EmptyState } from '@/components/EmptyState'
-import { Users2 } from 'lucide-react'
+import { Route, Routes } from 'react-router-dom'
+import TeacherDashboard from './Dashboard'
+import TeacherClasses from './Classes'
+import TeacherAttendance from './Attendance'
+import TeacherGrades from './Grades'
 
 export default function TeacherHome() {
   return (
-    <>
-      <PageHeader
-        title="Teacher Portal"
-        subtitle="Class lists, attendance, grade encoding."
-      />
-      <EmptyState
-        icon={Users2}
-        title="Teacher module — Phase 4"
-        description="My classes, attendance encoding, Excel-like grade sheet, and class announcements."
-      />
-    </>
+    <Routes>
+      <Route index element={<TeacherDashboard />} />
+      <Route path="classes" element={<TeacherClasses />} />
+      <Route path="attendance" element={<TeacherAttendance />} />
+      <Route path="grades" element={<TeacherGrades />} />
+    </Routes>
   )
 }

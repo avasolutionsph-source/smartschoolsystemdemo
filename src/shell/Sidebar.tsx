@@ -38,6 +38,7 @@ const NAV: Record<Role, NavItem[]> = {
     { to: '/registrar', label: 'Dashboard', icon: Home },
     { to: '/registrar/students', label: 'Students', icon: Users },
     { to: '/registrar/enrollment', label: 'Enrollment', icon: UserPlus },
+    { to: '/registrar/grades', label: 'Grades Lock-in', icon: GraduationCap },
     { to: '/registrar/documents', label: 'Document Requests', icon: FileText },
   ],
   accounting: [

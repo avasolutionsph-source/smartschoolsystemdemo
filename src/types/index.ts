@@ -76,6 +76,7 @@ export interface Payment {
 export interface Grade {
   id: string
   studentId: string
+  classId?: string
   subject: string
   term: string
   grade: number
@@ -109,6 +110,18 @@ export interface DocumentRequest {
 }
 
 export type ClearanceArea = 'academic' | 'financial' | 'library' | 'laboratory'
+
+export type AttendanceStatus = 'present' | 'absent' | 'late' | 'excused'
+
+export interface AttendanceRecord {
+  id: string
+  classId: string
+  studentId: string
+  date: string
+  status: AttendanceStatus
+  postedBy: string
+  postedAt: string
+}
 
 export interface ScheduleEntry {
   day: 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat'
