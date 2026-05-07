@@ -3,6 +3,7 @@ import { Layout } from '@/shell/Layout'
 import { useSession } from '@/lib/store'
 import { ROLE_HOME } from '@/lib/roles'
 import Login from '@/routes/Login'
+import Inquire from '@/routes/Inquire'
 
 import AdminDashboard from '@/modules/admin/Dashboard'
 import AdminUsers from '@/modules/admin/UserManagement'
@@ -33,6 +34,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/inquire" element={<Inquire />} />
 
       <Route
         element={

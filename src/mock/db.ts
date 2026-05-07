@@ -1,11 +1,15 @@
 import Dexie, { type Table } from 'dexie'
 import type {
   Announcement,
+  Asset,
   AttendanceRecord,
   DocumentRequest,
   Employee,
   Grade,
+  Lead,
   Payment,
+  PayrollRun,
+  Payslip,
   Student,
   Ticket,
   User,
@@ -21,6 +25,10 @@ export class AbcDB extends Dexie {
   tickets!: Table<Ticket, string>
   documentRequests!: Table<DocumentRequest, string>
   attendance!: Table<AttendanceRecord, string>
+  leads!: Table<Lead, string>
+  assets!: Table<Asset, string>
+  payrollRuns!: Table<PayrollRun, string>
+  payslips!: Table<Payslip, string>
 
   constructor() {
     super('abc-sss')
@@ -40,6 +48,12 @@ export class AbcDB extends Dexie {
       attendance: 'id, classId, studentId, date',
       grades: 'id, studentId, classId, term, status',
     })
+    this.version(4).stores({
+      leads: 'id, stage, createdAt',
+      assets: 'id, category, status, location',
+      payrollRuns: 'id, status, createdAt',
+      payslips: 'id, runId, employeeId',
+    })
   }
 }
 
@@ -56,6 +70,10 @@ export async function resetDb() {
     db.tickets.clear(),
     db.documentRequests.clear(),
     db.attendance.clear(),
+    db.leads.clear(),
+    db.assets.clear(),
+    db.payrollRuns.clear(),
+    db.payslips.clear(),
   ])
   localStorage.removeItem('abc-sss-seeded')
 }

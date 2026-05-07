@@ -1,19 +1,14 @@
-import { PageHeader } from '@/components/PageHeader'
-import { EmptyState } from '@/components/EmptyState'
-import { Megaphone } from 'lucide-react'
+import { Route, Routes } from 'react-router-dom'
+import MarketingDashboard from './Dashboard'
+import MarketingLeads from './Leads'
+import MarketingPromos from './Promos'
 
 export default function MarketingHome() {
   return (
-    <>
-      <PageHeader
-        title="Marketing / Admissions"
-        subtitle="Inquiry intake, lead pipeline, promotions."
-      />
-      <EmptyState
-        icon={Megaphone}
-        title="Marketing module — Phase 5"
-        description="Public inquiry form, lead Kanban, applicant profile, communication log, and conversion analytics."
-      />
-    </>
+    <Routes>
+      <Route index element={<MarketingDashboard />} />
+      <Route path="leads" element={<MarketingLeads />} />
+      <Route path="promos" element={<MarketingPromos />} />
+    </Routes>
   )
 }

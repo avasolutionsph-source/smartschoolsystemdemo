@@ -1,19 +1,14 @@
-import { PageHeader } from '@/components/PageHeader'
-import { EmptyState } from '@/components/EmptyState'
-import { Wrench } from 'lucide-react'
+import { Route, Routes } from 'react-router-dom'
+import MaintenanceDashboard from './Dashboard'
+import MaintenanceTickets from './Tickets'
+import MaintenanceAssets from './Assets'
 
 export default function MaintenanceHome() {
   return (
-    <>
-      <PageHeader
-        title="Maintenance / Operations"
-        subtitle="Tickets, assets, recurring tasks."
-      />
-      <EmptyState
-        icon={Wrench}
-        title="Maintenance module — Phase 5"
-        description="Ticket Kanban, photo attachments, asset registry, and recurring task scheduler."
-      />
-    </>
+    <Routes>
+      <Route index element={<MaintenanceDashboard />} />
+      <Route path="tickets" element={<MaintenanceTickets />} />
+      <Route path="assets" element={<MaintenanceAssets />} />
+    </Routes>
   )
 }

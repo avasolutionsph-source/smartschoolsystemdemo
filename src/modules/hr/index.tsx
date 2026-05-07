@@ -1,19 +1,16 @@
-import { PageHeader } from '@/components/PageHeader'
-import { EmptyState } from '@/components/EmptyState'
-import { Briefcase } from 'lucide-react'
+import { Route, Routes } from 'react-router-dom'
+import HRDashboard from './Dashboard'
+import HREmployees from './Employees'
+import HRPayroll from './Payroll'
+import HRAttendance from './Attendance'
 
 export default function HRHome() {
   return (
-    <>
-      <PageHeader
-        title="HR / Payroll"
-        subtitle="Employees, attendance, payroll, payslips."
-      />
-      <EmptyState
-        icon={Briefcase}
-        title="HR module — Phase 5"
-        description="Employee 201, DTR, payroll wizard with computation engine, payslip preview, and remittance reports."
-      />
-    </>
+    <Routes>
+      <Route index element={<HRDashboard />} />
+      <Route path="employees" element={<HREmployees />} />
+      <Route path="payroll" element={<HRPayroll />} />
+      <Route path="attendance" element={<HRAttendance />} />
+    </Routes>
   )
 }

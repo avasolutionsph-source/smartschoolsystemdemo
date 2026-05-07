@@ -123,6 +123,57 @@ export interface AttendanceRecord {
   postedAt: string
 }
 
+export type LeadStage = 'inquiry' | 'contacted' | 'toured' | 'applied' | 'enrolled' | 'lost'
+
+export interface Lead {
+  id: string
+  firstName: string
+  lastName: string
+  email: string
+  contact?: string
+  program?: string
+  yearLevel?: number
+  source: 'walk-in' | 'website' | 'referral' | 'fb' | 'event'
+  stage: LeadStage
+  notes?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type AssetStatus = 'operational' | 'maintenance' | 'retired'
+
+export interface Asset {
+  id: string
+  code: string
+  name: string
+  category: 'electronics' | 'furniture' | 'lab equipment' | 'vehicle' | 'other'
+  location: string
+  status: AssetStatus
+  purchasedAt: string
+}
+
+export type PayrollStatus = 'draft' | 'released'
+
+export interface PayrollRun {
+  id: string
+  periodStart: string
+  periodEnd: string
+  status: PayrollStatus
+  totalNet: number
+  releasedAt?: string
+  createdAt: string
+}
+
+export interface Payslip {
+  id: string
+  runId: string
+  employeeId: string
+  basic: number
+  allowances: number
+  deductions: number
+  net: number
+}
+
 export interface ScheduleEntry {
   day: 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat'
   startTime: string

@@ -1,17 +1,20 @@
 import { db, resetDb } from './db'
 import type {
   Announcement,
+  Asset,
   DocumentRequest,
   DocumentType,
   Employee,
   Grade,
+  Lead,
+  LeadStage,
   Payment,
   Student,
   Ticket,
   User,
 } from '@/types'
 
-const SEED_KEY = 'abc-sss-seeded-v3'
+const SEED_KEY = 'abc-sss-seeded-v4'
 
 const FIRST_NAMES = [
   'Ava', 'Liam', 'Sophia', 'Noah', 'Maya', 'Ethan', 'Isla', 'Mateo',
@@ -220,6 +223,59 @@ function makeTickets(): Ticket[] {
   }))
 }
 
+function makeLeads(): Lead[] {
+  const stages: LeadStage[] = ['inquiry', 'contacted', 'toured', 'applied', 'enrolled', 'lost']
+  const sources: Lead['source'][] = ['walk-in', 'website', 'referral', 'fb', 'event']
+  return Array.from({ length: 18 }, (_, i) => {
+    const stage = stages[i % stages.length]
+    const created = isoDaysAgo(20 - i)
+    return {
+      id: id('lead', i + 1),
+      firstName: pick(FIRST_NAMES),
+      lastName: pick(LAST_NAMES),
+      email: `inquiry${i + 1}@gmail.com`,
+      contact: `+63 9${Math.floor(100000000 + Math.random() * 899999999)}`,
+      program: pick(PROGRAMS),
+      yearLevel: 1,
+      source: sources[i % sources.length],
+      stage,
+      notes: pick([
+        'Interested in dorm options',
+        'Asked about scholarship requirements',
+        'Wants campus tour scheduled',
+        'Sibling discount inquiry',
+        'Transferee from another school',
+      ]),
+      createdAt: created,
+      updatedAt: created,
+    }
+  })
+}
+
+function makeAssets(): Asset[] {
+  const items: Array<{ name: string; category: Asset['category']; location: string }> = [
+    { name: 'Smart TV 65"', category: 'electronics', location: 'AVR' },
+    { name: 'Aircon Split Type', category: 'electronics', location: 'Room 301' },
+    { name: 'Printer HP M404n', category: 'electronics', location: 'Registrar' },
+    { name: 'Generator Set 50kVA', category: 'electronics', location: 'Power House' },
+    { name: 'Office Desk', category: 'furniture', location: 'Faculty Room' },
+    { name: 'Whiteboard', category: 'furniture', location: 'Room 205' },
+    { name: 'Microscope', category: 'lab equipment', location: 'Bio Lab' },
+    { name: 'Centrifuge', category: 'lab equipment', location: 'Chem Lab' },
+    { name: 'Service Van Toyota Hiace', category: 'vehicle', location: 'Motorpool' },
+    { name: 'Chairs (Set of 40)', category: 'furniture', location: 'Library' },
+  ]
+  return items.map((it, i) => ({
+    id: id('ast', i + 1),
+    code: `ASSET-${(3000 + i).toString()}`,
+    name: it.name,
+    category: it.category,
+    location: it.location,
+    status: i === 1 ? 'maintenance' : i === 9 ? 'retired' : 'operational',
+    purchasedAt: isoDaysAgo(365 + i * 60),
+  }))
+}
+
 function makeDocumentRequests(students: Student[]): DocumentRequest[] {
   const types: DocumentType[] = ['TOR', 'COE', 'Form 137', 'Good Moral']
   const purposes = [
@@ -256,12 +312,15 @@ export async function ensureSeed() {
   const grades = makeGrades(students)
   const tickets = makeTickets()
   const documentRequests = makeDocumentRequests(students)
+  const leads = makeLeads()
+  const assets = makeAssets()
 
   await db.transaction(
     'rw',
     [
       db.users, db.students, db.employees, db.announcements,
       db.payments, db.grades, db.tickets, db.documentRequests,
+      db.leads, db.assets,
     ],
     async () => {
       await db.users.bulkPut(users)
@@ -272,6 +331,8 @@ export async function ensureSeed() {
       await db.grades.bulkPut(grades)
       await db.tickets.bulkPut(tickets)
       await db.documentRequests.bulkPut(documentRequests)
+      await db.leads.bulkPut(leads)
+      await db.assets.bulkPut(assets)
     },
   )
   localStorage.setItem(SEED_KEY, '1')
