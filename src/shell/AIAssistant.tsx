@@ -51,7 +51,7 @@ export function AIAssistant() {
       <button
         onClick={() => setOpen(true)}
         title="Ask the AI Assistant"
-        className="fixed bottom-6 right-6 z-20 inline-flex items-center gap-2 rounded-full bg-gradient-to-tr from-brand-600 to-violet-600 px-4 py-3 text-sm font-medium text-white shadow-lg hover:brightness-110"
+        className="no-print fixed bottom-6 right-6 z-20 inline-flex items-center gap-2 rounded-full bg-gradient-to-tr from-brand-600 to-violet-600 px-4 py-3 text-sm font-medium text-white shadow-lg hover:brightness-110"
       >
         <Sparkles className="h-4 w-4" />
         Ask AI

@@ -40,3 +40,51 @@
     @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
   }
 }
+
+@media print {
+  /* Hide app chrome and interactive controls when printing */
+  header,
+  aside,
+  nav,
+  .btn,
+  .btn-primary,
+  .btn-outline,
+  .btn-ghost,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  main {
+    overflow: visible !important;
+  }
+
+  .card {
+    box-shadow: none !important;
+    border-color: #e2e8f0 !important;
+    page-break-inside: avoid;
+  }
+
+  /* Tables print clean */
+  table {
+    border-collapse: collapse;
+  }
+  thead {
+    display: table-header-group;
+  }
+  tr,
+  td,
+  th {
+    page-break-inside: avoid;
+  }
+
+  /* Make backgrounds and colors print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+

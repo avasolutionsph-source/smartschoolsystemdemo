@@ -4,6 +4,7 @@ import { useSession } from '@/lib/store'
 import { ROLE_HOME } from '@/lib/roles'
 import Login from '@/routes/Login'
 import Inquire from '@/routes/Inquire'
+import Landing from '@/routes/Landing'
 
 import AdminDashboard from '@/modules/admin/Dashboard'
 import AdminUsers from '@/modules/admin/UserManagement'
@@ -18,21 +19,22 @@ import MaintenanceHome from '@/modules/maintenance/index'
 import MarketingHome from '@/modules/marketing/index'
 import HRHome from '@/modules/hr/index'
 
-function HomeRedirect() {
+function HomeRoute() {
   const { loggedIn, role } = useSession()
-  if (!loggedIn) return <Navigate to="/login" replace />
-  return <Navigate to={ROLE_HOME[role]} replace />
+  if (loggedIn) return <Navigate to={ROLE_HOME[role]} replace />
+  return <Landing />
 }
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const loggedIn = useSession((s) => s.loggedIn)
-  if (!loggedIn) return <Navigate to="/login" replace />
+  if (!loggedIn) return <Navigate to="/" replace />
   return <>{children}</>
 }
 
 export default function App() {
   return (
     <Routes>
+      <Route path="/" element={<HomeRoute />} />
       <Route path="/login" element={<Login />} />
       <Route path="/inquire" element={<Inquire />} />
 
@@ -43,8 +45,6 @@ export default function App() {
           </RequireAuth>
         }
       >
-        <Route path="/" element={<HomeRedirect />} />
-
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/announcements" element={<AdminAnnouncements />} />
@@ -57,9 +57,9 @@ export default function App() {
         <Route path="/maintenance/*" element={<MaintenanceHome />} />
         <Route path="/marketing/*" element={<MarketingHome />} />
         <Route path="/hr/*" element={<HRHome />} />
-
-        <Route path="*" element={<HomeRedirect />} />
       </Route>
+
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
