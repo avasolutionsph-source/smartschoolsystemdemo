@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { CheckCircle2, Save } from 'lucide-react'
+import { CheckCircle2, QrCode, Save, ScanLine } from 'lucide-react'
 import { db } from '@/mock/db'
 import { PageHeader } from '@/components/PageHeader'
 import { useSession } from '@/lib/store'
@@ -21,6 +21,8 @@ export default function Attendance() {
   const [date, setDate] = useState(todayStr())
   const [marks, setMarks] = useState<Record<string, AttendanceStatus>>({})
   const [savedFlash, setSavedFlash] = useState(false)
+  const [qrMode, setQrMode] = useState(false)
+  const [scanFlash, setScanFlash] = useState<string | null>(null)
 
   const cls = TEACHER_CLASSES.find((c) => c.id === classId)!
   const students = useLiveQuery(
@@ -63,6 +65,16 @@ export default function Attendance() {
     setMarks(next)
   }
 
+  function simulateScan() {
+    if (!students || students.length === 0) return
+    const unmarked = students.filter((s) => !marks[s.id] || marks[s.id] === 'absent')
+    const pool = unmarked.length > 0 ? unmarked : students
+    const picked = pool[Math.floor(Math.random() * pool.length)]
+    setMarks((m) => ({ ...m, [picked.id]: 'present' }))
+    setScanFlash(`${picked.firstName} ${picked.lastName} checked in`)
+    setTimeout(() => setScanFlash(null), 2500)
+  }
+
   async function save() {
     if (!students) return
     const now = new Date().toISOString()
@@ -94,7 +106,50 @@ export default function Attendance() {
       <PageHeader
         title="Attendance Encoding"
         subtitle="Pick a class and date. Marks save to the central record — students see them in their portal."
+        actions={
+          <button
+            onClick={() => setQrMode((q) => !q)}
+            className={cn(qrMode ? 'btn-primary' : 'btn-outline')}
+          >
+            <QrCode className="h-4 w-4" /> {qrMode ? 'Manual mode' : 'QR check-in'}
+          </button>
+        }
       />
+
+      {qrMode && (
+        <div className="card mb-4 p-5">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-[200px_1fr] items-center">
+            <div className="mx-auto">
+              <div className="grid h-44 w-44 place-items-center rounded-xl bg-slate-900 p-3">
+                <QrPattern seed={`${classId}-${date}`} />
+              </div>
+              <div className="mt-2 text-center text-[10px] font-mono text-slate-500">
+                {classId} · {date}
+              </div>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-slate-800">Live QR session</h3>
+              <p className="mt-1 text-xs text-slate-600">
+                Project this QR. Each student scans it once with the school app to record their attendance —
+                no roll call needed.
+              </p>
+              <div className="mt-3 flex items-center gap-3">
+                <button onClick={simulateScan} className="btn-primary">
+                  <ScanLine className="h-4 w-4" /> Simulate student scan
+                </button>
+                {scanFlash && (
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600">
+                    <CheckCircle2 className="h-4 w-4" /> {scanFlash}
+                  </span>
+                )}
+              </div>
+              <p className="mt-3 text-[11px] text-slate-400">
+                Demo: clicking simulate marks a random unmarked student as Present. Real deployment will use the school app's camera.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="card p-5">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -163,6 +218,24 @@ export default function Attendance() {
         </ul>
       </div>
     </>
+  )
+}
+
+function QrPattern({ seed }: { seed: string }) {
+  // Deterministic 11×11 noise pattern based on seed (purely cosmetic)
+  let h = 0
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0
+  const cells: boolean[] = []
+  for (let i = 0; i < 121; i++) {
+    h = (h * 1664525 + 1013904223) >>> 0
+    cells.push((h & 1) === 0)
+  }
+  return (
+    <div className="grid h-full w-full grid-cols-11 grid-rows-11 gap-[2px] rounded-md bg-slate-900 p-1">
+      {cells.map((on, i) => (
+        <div key={i} className={on ? 'bg-white' : 'bg-slate-900'} />
+      ))}
+    </div>
   )
 }
 

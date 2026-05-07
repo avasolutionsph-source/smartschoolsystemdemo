@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Bell, ChevronDown, LogOut, RefreshCw, Search } from 'lucide-react'
+import { ChevronDown, LogOut, RefreshCw } from 'lucide-react'
 import { useSession } from '@/lib/store'
 import { ROLE_ACCENT, ROLE_HOME, ROLE_LABEL, ROLES } from '@/lib/roles'
 import { reseed } from '@/mock/seed'
 import { cn, initials } from '@/lib/utils'
 import type { Role } from '@/types'
+import { GlobalSearch } from './GlobalSearch'
+import { NotificationsButton } from './NotificationsButton'
 
 export function TopBar() {
   const { role, displayName, setRole, logout } = useSession()
@@ -43,14 +45,9 @@ export function TopBar() {
         </div>
       </div>
 
-      <div className="hidden flex-1 max-w-md mx-8 md:block">
-        <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search students, employees, tickets…"
-            className="input pl-9"
-          />
+      <div className="hidden flex-1 mx-8 md:block">
+        <div className="mx-auto max-w-md">
+          <GlobalSearch />
         </div>
       </div>
 
@@ -63,9 +60,7 @@ export function TopBar() {
           <RefreshCw className="h-4 w-4" />
           <span className="hidden sm:inline text-xs">Reset</span>
         </button>
-        <button className="btn-ghost" title="Notifications">
-          <Bell className="h-4 w-4" />
-        </button>
+        <NotificationsButton />
 
         <div className="relative">
           <button
