@@ -1,19 +1,16 @@
-import { PageHeader } from '@/components/PageHeader'
-import { EmptyState } from '@/components/EmptyState'
-import { CreditCard } from 'lucide-react'
+import { Route, Routes } from 'react-router-dom'
+import AccountingDashboard from './Dashboard'
+import AccountingSOA from './SOA'
+import AccountingPayments from './Payments'
+import AccountingReports from './Reports'
 
 export default function AccountingHome() {
   return (
-    <>
-      <PageHeader
-        title="Accounting Office"
-        subtitle="Tuition assessment, payments, SOA, and clearance."
-      />
-      <EmptyState
-        icon={CreditCard}
-        title="Accounting module — Phase 3"
-        description="SOA viewer, payment posting, OR generation, discounts, and financial reports."
-      />
-    </>
+    <Routes>
+      <Route index element={<AccountingDashboard />} />
+      <Route path="soa" element={<AccountingSOA />} />
+      <Route path="payments" element={<AccountingPayments />} />
+      <Route path="reports" element={<AccountingReports />} />
+    </Routes>
   )
 }

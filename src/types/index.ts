@@ -60,12 +60,15 @@ export interface Announcement {
   createdAt: string
 }
 
+export type PaymentMethod = 'cash' | 'bank' | 'online' | 'discount' | 'scholarship'
+
 export interface Payment {
   id: string
   studentId: string
   amount: number
-  method: 'cash' | 'bank' | 'online'
+  method: PaymentMethod
   orNumber: string
+  remarks?: string
   postedAt: string
   postedBy: string
 }
